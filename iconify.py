@@ -21,6 +21,7 @@ from flask import render_template
 from flask import redirect
 from flask import request
 from flask import url_for
+from flask import send_from_directory
 from werkzeug.utils import secure_filename
 import os
 import uuid
@@ -28,7 +29,7 @@ from sugariconify import SugarIconify
 from xocolor import random_color
 
 app = Flask(__name__)
-script_path = os.path.dirname(os.path.realpath(__file__))
+script_path = app.root_path
 static_path = os.path.join(script_path, "static/")
 wip_path = os.path.join(static_path, "wip/")
 done_path = os.path.join(static_path, "done/")
@@ -59,6 +60,7 @@ def upload_file():
 
     return redirect("/?error=yup")
 
+
 @app.route('/', methods=['GET'])
 def index():
     file_name = request.args.get('filename')
@@ -85,6 +87,7 @@ def index():
         sugarized_icon_file=sugarized_file,
         icon_name=file_name,
         error=error)
+
 
 @app.route('/randomcolor')
 def random_icon_with_color():
@@ -114,9 +117,20 @@ def random_icon_with_color():
 
     return "OK"
 
+
 @app.errorhandler(404)
 def page_not_found(e):
     return redirect("/")
+
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(
+        os.path.join(
+            app.root_path,
+            'static'),
+        'favicon.ico',
+        mimetype='image/vnd.microsoft.icon')
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=5000, threaded=True)
