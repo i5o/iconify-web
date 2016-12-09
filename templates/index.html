@@ -1,7 +1,142 @@
 <head>
     <title>Sugar Iconify Web</title>
+
+    <!-- Useless stuff :DDDDDDDDDDDDDDDDD -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <style>
+        .content {
+            margin-left: 2%;
+            margin-right: 2%;
+        }
+        
+        label {
+            width: 100%;
+        }
+        
+        .image-left {
+            width: 80%;
+        }
+        
+        .upload:hover, a:hover {
+            cursor: pointer;
+        }
+        
+        * {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+    </style>
+    <script>
+        var keepwaiting = false;
+        function hover(element) {
+            element.setAttribute('src', '/static/img/upload_hover.svg');
+        }
+
+        function unhover(element) {
+            element.setAttribute('src', '/static/img/upload_normal.svg');
+        }
+        
+        function randomcolor() {
+            if (keepwaiting) {
+                return;
+            }
+
+            keepwaiting = true;
+            var xhr = new XMLHttpRequest();
+            var random_color = document.getElementById("random-color");
+            var waitffs = document.getElementById('waitplz');
+            waitffs.style.display = 'inline';
+
+            xhr.open("GET", "/randomcolor?filename={{ icon_name }}", true);
+            xhr.onload = function(e) {
+                if (xhr.readyState === 4) {
+                    document.getElementById("sugarized-icon").innerHTML = "Sugarized icon <small>(testing with random color)</small>";
+                    random_color.innerHTML = "Test with another random color";
+                    document.getElementById("sugarized-icon-img").setAttribute('src', '/static/random/{{ icon_name }}?=' +  new Date().getTime());
+                    waitffs.style.display = 'none';
+                    keepwaiting = false;
+                }
+            };
+            xhr.send(null);
+        }
+    </script>
 </head>
 
 <body>
-<p>Hello world</p>
+    <div class="content">
+        <div class="page-header">
+            <h1>Sugar Iconify<br> <small>Just a web frontend for <a href="https://github.com/jrg96/sugariconify/blob/master/sugariconify.py">the script</a></small></h1>
+        </div>
+
+        {% if error %}
+        <div class="alert alert-danger" role="alert">
+          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+          <span class="sr-only"></span>Error uploading your file: remember that <b>only</b> svg files are supported.
+        </div>
+        {% endif %}
+
+        <div style="display: none" id="uploading_file" class="alert alert-info" role="alert">
+          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+          <span class="sr-only"></span>Uploading your file: this may take a while
+        </div>
+
+        <div class="row" style="margin-top: -3%;">
+            <div class="col-lg-6">
+                <div style="margin-right: 20%;" class="page-header">
+                    <h2>Original icon</h2>
+                    {% if original_icon_file %}
+                    <a href="/">Start again</a> 
+                    <a style="float: right;" href="/static/wip/{{ icon_name }}">Download</a>
+                    {% endif %}
+                </div>
+
+                {% if original_icon_file %}
+                <img src="{{ original_icon_file }}" class="image-left" />
+                {% else %}
+                <label for="file-input">
+                    <img src="/static/img/upload_normal.svg" class="image-left upload" onmouseover="hover(this);" onmouseout="unhover(this);" />
+                </label>
+                <form style="display: none;" id="form" action="" method=post enctype=multipart/form-data>
+                    <input id="file-input" type=file name=file>
+                    <input type=submit>
+                </form>
+                {% endif %}
+
+            </div>
+
+            {% if sugarized_icon_file %}
+            <div class="col-lg-6">
+                <div style="margin-right: 20%;" class="page-header">
+                    <h2 id="sugarized-icon">Sugarized icon</h2>
+                    <a id="random-color">Test with random sugar color</a><span style="display: none;" id="waitplz"><i><b> -- wait</b></i></span>
+                    <a style="float: right;" href="/static/done/{{ icon_name }}">Download</a>
+                </div>
+                <img id="sugarized-icon-img" src="{{ sugarized_icon_file }}" class="image-left" />
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+    <script>
+        var file_input = document.getElementById("file-input");
+        if (file_input) {
+            file_input.onchange = function() {
+                var form = document.getElementById("form");
+                document.getElementById("uploading_file").style.display = "inline-block";
+                form.submit();
+                
+            }
+        }; 
+       
+        var random_color = document.getElementById("random-color");
+        if (random_color) {
+            random_color.onclick = randomcolor;
+        };
+    </script>
 </body>
