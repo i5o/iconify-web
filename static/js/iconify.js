@@ -33,6 +33,11 @@ function randomcolor() {
     xhr.send(null);
 }
 
+function changeBackground() {
+    var color = document.getElementById("backgroundcolor").value;
+    document.body.style.backgroundColor = color;
+}
+
 var file_input = document.getElementById("file-input");
 if (file_input) {
     file_input.onchange = function() {
@@ -43,7 +48,11 @@ if (file_input) {
     }
 };
 
-var random_color = document.getElementById("random-color");
-if (random_color) {
-    random_color.onclick = randomcolor;
-};
+$('#random-color').on('click', function(){
+      randomcolor();
+});
+
+$('#apply_color').on('click', function(){
+      changeBackground();
+});
+
