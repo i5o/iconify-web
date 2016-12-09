@@ -191,6 +191,28 @@ class SugarIconify():
     def set_use_iso_strokes(self, i=False):
         self.use_iso_strokes = i
 
+    def create_svgdom(self, svgtext):
+        # Create the SVG DOM
+        self.svgxml = xml.dom.minidom.parseString(svgtext)
+
+        # Extract top-level nodes
+        self.i = 0
+        self.svgindex = 0
+        self.docindex = 0
+        for element in self.svgxml.childNodes:
+            if element.nodeType == 10:
+                self.docindex = self.i
+            elif element.localName == 'svg':
+                self.svgindex = self.i
+                break
+            self.i += 1
+
+        self.doctype = self.svgxml.childNodes[self.docindex]
+        self.svg = self.svgxml.childNodes[self.svgindex]
+
+    def get_colors(self):
+        return self.guessEntities(self.svg)
+
     def iconify(self, file_path, output_file=None):
         # Isolate important parts of the input path
         self.svgfilepath = file_path
@@ -287,26 +309,11 @@ class SugarIconify():
         self.stroke_entity = '&' + self.stroke_entity + ';'
         self.fill_entity = '&' + self.fill_entity + ';'
 
-        # Create the SVG DOM
         try:
-            self.svgxml = xml.dom.minidom.parseString(self.svgtext)
+            self.create_svgdom(self.svgtext)
         except Exception as e:
             sys.exit('Error: Could not parse ' + self.svgfilename + str(e))
 
-        # Extract top-level nodes
-        self.i = 0
-        self.svgindex = 0
-        self.docindex = 0
-        for element in self.svgxml.childNodes:
-            if element.nodeType == 10:
-                self.docindex = self.i
-            elif element.localName == 'svg':
-                self.svgindex = self.i
-                break
-            self.i += 1
-
-        self.doctype = self.svgxml.childNodes[self.docindex]
-        self.svg = self.svgxml.childNodes[self.svgindex]
         icons = self.svg.childNodes
 
         # Validate canvas size

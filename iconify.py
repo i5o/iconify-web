@@ -73,7 +73,16 @@ def index():
         sugarized_file = os.path.join(done_path, file_name)
 
         try:
+            of = open(original_file, "r")
+            svgtext = of.read()
+            of.close()
+
             iconify = SugarIconify()
+            iconify.create_svgdom(svgtext)
+            colors = iconify.get_colors()
+
+            iconify.set_stroke_color(colors[0])
+            iconify.set_fill_color(colors[1])
             iconify.iconify(original_file, sugarized_file)
         except:
             return redirect("/?error=yup")
