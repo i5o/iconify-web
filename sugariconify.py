@@ -327,7 +327,8 @@ class SugarIconify():
         if self.w not in ['55px', '55'] or self.h not in ['55px', '55']:
             debug_msg = 'Warning: invalid canvas size (%s, %s); \
 Should be (55px, 55px)' % (self.w, self.h)
-            debug.append("\n" + debug_msg)
+            debug.append(debug_msg)
+            debug.append("\n")
             print debug_msg
             debug_msg = ""
 
@@ -335,6 +336,7 @@ Should be (55px, 55px)' % (self.w, self.h)
         if self.use_entities:
             debug_msg = 'entities_passed == ' + str(self.entities_passed)
             debug.append(debug_msg)
+            debug.append("\n")
             print debug_msg
             debug_msg = ""
 
@@ -535,6 +537,7 @@ proper colors with the -s and -f flags.'
                                         debug_msg = 'Warning: no fill entity replacements were made in %s' % icon_name
 
                                     debug.append(debug_msg)
+                                    debug.append("\n")
                                     print debug_msg
                                     debug_msg = ""
 
@@ -635,7 +638,8 @@ proper colors with the -s and -f flags.'
                     debug_msg = 'Warning: no fill entity replacements were made'
 
                 print debug_msg
-                debug.append("\n" + debug_msg)
+                debug.append(debug_msg)
+                debug.append("\n")
                 debug_msg = ""
 
                 if self.use_iso_strokes:
