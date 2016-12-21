@@ -25,7 +25,7 @@ from flask import send_from_directory
 from werkzeug.utils import secure_filename
 import os
 import uuid
-from sugariconify import SugarIconify
+import sugariconify
 from xocolor import random_color
 
 app = Flask(__name__)
@@ -67,6 +67,8 @@ def index():
     error = request.args.get('error')
     original_file = None
     sugarized_file = None
+    python_error = request.args.get('pythonerror')
+    debug_msg = None
 
     if file_name:
         original_file = os.path.join(wip_path, file_name)
@@ -77,15 +79,26 @@ def index():
             svgtext = of.read()
             of.close()
 
-            iconify = SugarIconify()
+            iconify = sugariconify.SugarIconify()
             iconify.create_svgdom(svgtext)
             colors = iconify.get_colors()
 
             iconify.set_stroke_color(colors[0])
             iconify.set_fill_color(colors[1])
-            iconify.iconify(original_file, sugarized_file)
-        except:
-            return redirect("/?error=yup")
+            debug_output = iconify.iconify(original_file, sugarized_file)
+            debug = []
+
+            for x in debug_output:
+                if x == "\n":
+                    continue
+                debug.append(x)
+
+            debug_msg = "\n".join(debug).replace(
+                "\n",
+                "<br><span class='glyphicon glyphicon glyphicon-chevron-right' aria-hidden='true'>&nbsp;</span>")
+
+        except Exception as e:
+            return redirect("/?error=yup&pythonerror=%s" % str(e))
 
         original_file = "/static/wip/" + file_name
         sugarized_file = "/static/done/" + file_name
@@ -95,7 +108,9 @@ def index():
         original_icon_file=original_file,
         sugarized_icon_file=sugarized_file,
         icon_name=file_name,
-        error=error)
+        error=error,
+        python_error=python_error,
+        debug_msg=debug_msg)
 
 
 @app.route('/randomcolor')

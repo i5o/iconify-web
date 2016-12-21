@@ -20,8 +20,23 @@
         <div class="alert alert-danger" role="alert">
             <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
             <span class="sr-only"></span>Error uploading your file: remember that <b>only</b> svg files are supported.
+            {% if python_error %}
+            <br>
+            Developer info: <b>{{ python_error }}</b>
+            {% endif %}
         </div>
         {% endif %}
+
+        {% if debug_msg %}
+        <div class="alert alert-warning" role="alert">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            <span class="sr-only"></span><b>Debug info</b>
+            {% autoescape false %}
+            {{ debug_msg }}
+            {% endautoescape %}
+         </div>
+        {% endif %}
+
 
         <div style="display: none" id="uploading_file" class="alert alert-info" role="alert">
             <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
@@ -66,7 +81,6 @@
         </div>
 
         <span style="display: none" id="icon_name">{{ icon_name }}</span>
-        
     </div>
 
     {% if sugarized_icon_file %}
@@ -76,5 +90,6 @@
         <br><a id="apply_color">Apply</a>
     </footer>
     {% endif %}
+    
     <script src="/static/js/iconify.js"></script>
 </body>

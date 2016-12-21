@@ -249,6 +249,10 @@ class SugarIconify():
         if self.verbose:
             print 'The self.creator of this svg is ' + self.creator + '.'
 
+        # debug
+        debug = []
+        debug_msg = ""
+
         # Hack the entities into the readonly DTD
         if self.use_entities:
 
@@ -321,21 +325,31 @@ class SugarIconify():
         self.h = self.svg.getAttribute('height')
 
         if self.w not in ['55px', '55'] or self.h not in ['55px', '55']:
-            print 'Warning: invalid canvas size (%s, %s); \
+            debug_msg = 'Warning: invalid canvas size (%s, %s); \
 Should be (55px, 55px)' % (self.w, self.h)
+            debug.append("\n" + debug_msg)
+            print debug_msg
+            debug_msg = ""
 
         # Guess the entity values, if they aren't passed in
         if self.use_entities:
-            print 'entities_passed ==', self.entities_passed
+            debug_msg = 'entities_passed == ' + str(self.entities_passed)
+            debug.append(debug_msg)
+            print debug_msg
+            debug_msg = ""
 
             if self.entities_passed < 2:
                 self.stroke_color, self.fill_color = \
                     self.guessEntities(self.svg)
 
-            if self.confirm_guess or self.verbose:
-                print '\nentity definitions:'
-                print '     self.stroke_entity = ' + self.stroke_color
-                print '     self.fill_entity = ' + self.fill_color
+            if self.confirm_guess or self.verbose or debug:
+                print 'entity definitions:'
+                debug_msg = 'self.stroke_entity = ' + self.stroke_color
+                debug_msg += '\n'
+                debug_msg += 'self.fill_entity = ' + self.fill_color
+                print debug_msg
+                debug.append(debug_msg)
+                debug_msg = ""
 
                 if self.entities_passed < 2 and self.confirm_guess:
                     response = raw_input(
@@ -514,11 +528,15 @@ proper colors with the -s and -f flags.'
                                             icon_xml.childNodes[1])
 
                                     if not strokes_replaced and not fills_replaced:
-                                        print 'Warning: no entity replacements were made in %s' % icon_name
+                                        debug_msg = 'Warning: no entity replacements were made in %s' % icon_name
                                     elif not strokes_replaced:
-                                        print 'Warning: no stroke entity replacements were made in %s' % icon_name
+                                        debug_msg = 'Warning: no stroke entity replacements were made in %s' % icon_name
                                     elif not fills_replaced:
-                                        print 'Warning: no fill entity replacements were made in %s' % icon_name
+                                        debug_msg = 'Warning: no fill entity replacements were made in %s' % icon_name
+
+                                    debug.append("\n" + debug_msg)
+                                    print debug_msg
+                                    debug_msg = ""
 
                                     if not strokes_replaced or not fills_replaced:
                                         n_warnings += 1
@@ -610,11 +628,15 @@ proper colors with the -s and -f flags.'
                 strokes_replaced, fills_replaced = \
                     self.replaceEntities(self.svgxml)
                 if not strokes_replaced and not fills_replaced:
-                    print 'Warning: no entity replacements were made'
+                    debug_msg = 'Warning: no entity replacements were made'
                 elif not strokes_replaced:
-                    print 'Warning: no stroke entity replacements were made'
+                    debug_msg = 'Warning: no stroke entity replacements were made'
                 elif not fills_replaced:
-                    print 'Warning: no fill entity replacements were made'
+                    debug_msg = 'Warning: no fill entity replacements were made'
+
+                print debug_msg
+                debug.append("\n" + debug_msg)
+                debug_msg = ""
 
                 if self.use_iso_strokes:
                     strokes_fixed = self.fix_isolated_strokes(self.svgxml)
@@ -725,6 +747,7 @@ proper colors with the -s and -f flags.'
             except:
                 sys.exit('Error: Could not write file ' + self.output_path +
                          outfilename)
+        return debug
 
     # Define utility functions
     def getStroke(self, node):
