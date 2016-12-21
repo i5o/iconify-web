@@ -534,7 +534,7 @@ proper colors with the -s and -f flags.'
                                     elif not fills_replaced:
                                         debug_msg = 'Warning: no fill entity replacements were made in %s' % icon_name
 
-                                    debug.append("\n" + debug_msg)
+                                    debug.append(debug_msg)
                                     print debug_msg
                                     debug_msg = ""
 
