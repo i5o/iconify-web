@@ -23,9 +23,9 @@ from flask import request
 from flask import url_for
 from flask import send_from_directory
 from werkzeug.utils import secure_filename
+import sugariconify
 import os
 import uuid
-import sugariconify
 from xocolor import random_color
 
 app = Flask(__name__)
@@ -79,6 +79,7 @@ def index():
             svgtext = of.read()
             of.close()
 
+            reload(sugariconify)
             iconify = sugariconify.SugarIconify()
             iconify.create_svgdom(svgtext)
             colors = iconify.get_colors()
@@ -93,9 +94,16 @@ def index():
                     continue
                 debug.append(x)
 
+            if not debug[0].startswith("\n"):
+                debug[0] = "\n" + debug[0]
+
+            span = "<br><span class='glyphicon glyphicon glyphicon-chevron-right' aria-hidden='true'>&nbsp;</span>"
             debug_msg = "\n".join(debug).replace(
                 "\n",
-                "<br><span class='glyphicon glyphicon glyphicon-chevron-right' aria-hidden='true'>&nbsp;</span>")
+                span)
+
+            if debug_msg.endswith(span):
+                debug_msg = debug_msg[:-len(span)]
 
         except Exception as e:
             return redirect("/?error=yup&pythonerror=%s" % str(e))
