@@ -64,7 +64,11 @@ def upload_file():
             filename = str(uuid.uuid4()) + "_" + filename
             filename = secure_filename(filename)
             file.save(os.path.join(wip_path, filename))
-            return redirect(url_for('index', filename=filename, cleansvg=clean_svg))
+            return redirect(
+                url_for(
+                    'index',
+                    filename=filename,
+                    cleansvg=clean_svg))
 
     return redirect("/?error=yup")
 
@@ -91,7 +95,8 @@ def index():
 
             o_file = original_file
             if int(clean_svg):
-                svg_debug = subprocess.check_output(["./svgcleaner", original_file, sugarized_file])
+                svg_debug = subprocess.check_output(
+                    ["./svgcleaner", original_file, sugarized_file])
                 if not "error" in svg_debug.lower():
                     o_file = sugarized_file
 
@@ -111,7 +116,6 @@ def index():
             iconify.set_stroke_color(colors[0])
             iconify.set_fill_color(colors[1])
             debug_output = iconify.iconify(original_file, sugarized_file)
-
 
             for x in debug_output:
                 if x == "\n":
