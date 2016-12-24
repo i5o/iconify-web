@@ -48,6 +48,16 @@ if (file_input) {
     }
 };
 
+var file_input2 = document.getElementById("file-input2");
+if (file_input2) {
+    file_input2.onchange = function() {
+        var form2 = document.getElementById("form2");
+        document.getElementById("uploading_file").style.display = "block";
+        form2.submit();
+
+    }
+};
+
 $('#random-color').on('click', function(){
       randomcolor();
 });

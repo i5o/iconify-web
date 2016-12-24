@@ -41,19 +41,12 @@ finder = re.compile(
 stroke_color = '<!ENTITY stroke_color "{color}">'
 fill_color = '<!ENTITY fill_color "{color}">'
 
-
 @app.route('/', methods=['POST'])
 def upload_file():
     if request.method == 'POST':
         if 'file' not in request.files:
             return redirect("/?error=yup")
 
-        clean_svg = request.form.getlist("clean")
-
-        if clean_svg:
-            clean_svg = 1
-        else:
-            clean_svg = 0
 
         file = request.files['file']
         if file.filename == '':
@@ -64,11 +57,19 @@ def upload_file():
             filename = str(uuid.uuid4()) + "_" + filename
             filename = secure_filename(filename)
             file.save(os.path.join(wip_path, filename))
-            return redirect(
-                url_for(
-                    'index',
-                    filename=filename,
-                    cleansvg=clean_svg))
+
+            clean_svg = request.form.getlist("clean")
+            if clean_svg:
+                return redirect(
+                    url_for(
+                        'index',
+                        filename=filename,
+                        cleansvg=1))
+            else:
+                return redirect(
+                    url_for(
+                        'index',
+                        filename=filename))
 
     return redirect("/?error=yup")
 
@@ -86,25 +87,20 @@ def index():
     if not clean_svg:
         clean_svg = 0
 
+    if clean_svg and file_name:
+        original_file = os.path.join(wip_path, file_name)
+        done_file = os.path.join(done_path, file_name)
+        svg_debug = subprocess.check_output(
+                ["./svgcleaner", original_file, done_file])
+
+        return render_template("clean.html", debug_msg=svg_debug, filename=file_name)
+
     if file_name:
         original_file = os.path.join(wip_path, file_name)
         sugarized_file = os.path.join(done_path, file_name)
 
         try:
-            debug = []
-
-            o_file = original_file
-            if int(clean_svg):
-                svg_debug = subprocess.check_output(
-                    ["./svgcleaner", original_file, sugarized_file])
-                if not "error" in svg_debug.lower():
-                    o_file = sugarized_file
-
-                debug.append("\nSVG Cleaner: %s" % svg_debug)
-            else:
-                debug.append("\nSVG Cleaner: not enabled")
-
-            of = open(o_file, "r")
+            of = open(original_file, "r")
             svgtext = of.read()
             of.close()
 
@@ -116,26 +112,18 @@ def index():
             iconify.set_stroke_color(colors[0])
             iconify.set_fill_color(colors[1])
             debug_output = iconify.iconify(original_file, sugarized_file)
+            debug = []
 
             for x in debug_output:
                 if x == "\n":
                     continue
                 debug.append(x)
 
-            final_debug = []
-
-            for x in debug:
-                if x == "\n":
-                    continue
-                elif x.endswith("\n"):
-                    x = x[:-2]
-                final_debug.append(x)
-
-            if not final_debug[0].startswith("\n"):
-                final_debug[0] = "\n" + final_debug[0]
+            if not debug[0].startswith("\n"):
+                debug[0] = "\n" + debug[0]
 
             span = "<br><span class='glyphicon glyphicon glyphicon-chevron-right' aria-hidden='true'>&nbsp;</span>"
-            debug_msg = "\n".join(final_debug).replace(
+            debug_msg = "\n".join(debug).replace(
                 "\n",
                 span)
 

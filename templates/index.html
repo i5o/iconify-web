@@ -48,10 +48,12 @@
         <div class="row" style="margin-top: -3%;">
             <div class="col-lg-6">
                 <div style="margin-right: 20%;" class="page-header">
-                    <h2>Original icon</h2>
                     {% if original_icon_file %}
+                    <h2>Original icon</h2>
                     <a href="/">Start again</a>
                     <a style="float: right;" href="/static/wip/{{ icon_name }}">Download</a>
+                    {% else %}
+                    <h2>Sugar-Iconify SVG</h2>
                     {% endif %}
                 </div>
 
@@ -59,7 +61,6 @@
                 <img src="{{ original_icon_file }}" class="image-left" />
                 {% else %}
                 <form id="form" action="" method=post enctype=multipart/form-data>
-                    <input type="checkbox" name="clean" value="clean"> Clean SVG?
                     <input style="display: none;" id="file-input" type=file name=file>
                     <input style="display: none;" type=submit>
                 </form>
@@ -70,17 +71,29 @@
 
             </div>
 
-            {% if sugarized_icon_file %}
             <div class="col-lg-6">
                 <div style="margin-right: 20%;" class="page-header">
+                    {% if sugarized_icon_file %}
                     <h2 id="sugarized-icon">Sugarized icon</h2>
                     <a id="random-color">Test with random sugar color</a><span style="display: none;" id="waitplz"><i><b> -- wait</b></i></span>
                     <a style="float: right;" href="/static/done/{{ icon_name }}">Download</a>
+                    {% else %}
+                    <h2>Clean SVG file</h2>
+                    {% endif %}
                 </div>
+                {% if sugarized_icon_file %}
                 <img id="sugarized-icon-img" src="{{ sugarized_icon_file }}" class="image-left" />
+                {% else %}
+                <form id="form2" action="" method=post enctype=multipart/form-data>
+                    <input style="display: none;" id="file-input2" type=file name=file>
+                    <input style="display: none;"  type="checkbox"  value="clean" name="clean" checked>
+                    <input style="display: none;"  type=submit>
+                </form>
+                <label for="file-input2">
+                    <img src="/static/img/upload_normal.svg" class="image-left upload" onmouseover="hover(this);" onmouseout="unhover(this);" />
+                </label>
+                {% endif %}
             </div>
-            {% endif %}
-
         </div>
 
         <span style="display: none" id="icon_name">{{ icon_name }}</span>
