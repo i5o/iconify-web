@@ -41,12 +41,12 @@ finder = re.compile(
 stroke_color = '<!ENTITY stroke_color "{color}">'
 fill_color = '<!ENTITY fill_color "{color}">'
 
+
 @app.route('/', methods=['POST'])
 def upload_file():
     if request.method == 'POST':
         if 'file' not in request.files:
             return redirect("/?error=yup")
-
 
         file = request.files['file']
         if file.filename == '':
@@ -91,9 +91,12 @@ def index():
         original_file = os.path.join(wip_path, file_name)
         done_file = os.path.join(done_path, file_name)
         svg_debug = subprocess.check_output(
-                ["./svgcleaner", original_file, done_file])
+            ["./svgcleaner", original_file, done_file])
 
-        return render_template("clean.html", debug_msg=svg_debug, filename=file_name)
+        return render_template(
+            "clean.html",
+            debug_msg=svg_debug,
+            filename=file_name)
 
     if file_name:
         original_file = os.path.join(wip_path, file_name)
@@ -188,6 +191,7 @@ def favicon():
             'static'),
         'favicon.ico',
         mimetype='image/vnd.microsoft.icon')
+
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=5000, threaded=True)
