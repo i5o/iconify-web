@@ -58,13 +58,14 @@
                 {% if original_icon_file %}
                 <img src="{{ original_icon_file }}" class="image-left" />
                 {% else %}
+                <form id="form" action="" method=post enctype=multipart/form-data>
+                    <input type="checkbox" name="clean" value="clean"> Clean SVG?
+                    <input style="display: none;" id="file-input" type=file name=file>
+                    <input style="display: none;" type=submit>
+                </form>
                 <label for="file-input">
                     <img src="/static/img/upload_normal.svg" class="image-left upload" onmouseover="hover(this);" onmouseout="unhover(this);" />
                 </label>
-                <form style="display: none;" id="form" action="" method=post enctype=multipart/form-data>
-                    <input id="file-input" type=file name=file>
-                    <input type=submit>
-                </form>
                 {% endif %}
 
             </div>
@@ -85,13 +86,19 @@
         <span style="display: none" id="icon_name">{{ icon_name }}</span>
     </div>
 
-    {% if sugarized_icon_file %}
+
+    <center>
     <footer style="font-size: 15px; margin-left: 2%; margin-top: 8%">
-        Background color
-        <br><input id="backgroundcolor" style="width: 100px;" type="text" value="#FFFFFF">
-        <br><a id="apply_color">Apply</a>
-    </footer>
+    {% if sugarized_icon_file %}
+        Background color:
+        <input id="backgroundcolor" style="width: 100px;" type="text" value="#FFFFFF">
+        <a id="apply_color">Apply</a>
+        <br>
     {% endif %}
-    
+        SVG Cleaner script extracted from <a href="https://github.com/RazrFalcon/svgcleaner-gui/releases
+"> RazrFalcon/svgcleaner-gui (GitHub)</a>
+    </footer>
+    </center>
+
     <script src="/static/js/iconify.js"></script>
 </body>
