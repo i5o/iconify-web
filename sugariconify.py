@@ -307,7 +307,8 @@ class SugarIconify():
 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd' [\n" +
                             self.entities + "]>\n<svg", self.svgtext)
                 if self.n == 0:
-                    sys.exit('Error: Could not insert self.entities into DTD')
+                    debug.append('Error: Could not insert self.entities into DTD')
+                    return
 
         # Convert self.entities to references
         self.stroke_entity = '&' + self.stroke_entity + ';'
@@ -316,7 +317,8 @@ class SugarIconify():
         try:
             self.create_svgdom(self.svgtext)
         except Exception as e:
-            sys.exit('Error: Could not parse ' + self.svgfilename + str(e))
+            debug.append('Error: Could not parse ' + self.svgfilename + str(e))
+            return
 
         icons = self.svg.childNodes
 
@@ -668,7 +670,8 @@ proper colors with the -s and -f flags.'
                     f.write(re.sub(r'~~~', svgbasename, self.previewHTML))
                     f.close()
                 except:
-                    sys.exit('Error: could not write to HTML preview file')
+                    debug.append('Error: could not write to HTML preview file')
+                    return
 
                 example_colors = [(self.default_stroke_color, '#FFFFFF',
                                    self.default_stroke_color),
@@ -689,8 +692,9 @@ proper colors with the -s and -f flags.'
                     try:
                         f = open(example_path + example_filenames[i], 'w')
                     except:
-                        sys.exit('Error: Could not save to ' + example_path +
+                        debug.append('Error: Could not save to ' + example_path +
                                  example_filenames[i])
+                        return
                     try:
                         icon_svgtext = re.sub(
                             r'ENTITY self.stroke_color "[^"]*"',
@@ -714,8 +718,9 @@ proper colors with the -s and -f flags.'
                         f.write(icon_svgtext)
                         f.close()
                     except:
-                        sys.exit('Error: Could not write file ' +
+                        debug.append('Error: Could not write file ' +
                                  self.output_path + example_filenames[i])
+                        return
 
             try:
                 f = open(self.output_path + outfilename, 'w')
